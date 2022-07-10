@@ -6,6 +6,7 @@ import type {
 import { json, redirect } from "@remix-run/node";
 import { Form, Link, useActionData, useSearchParams } from "@remix-run/react";
 import * as React from "react";
+
 import { createUser, getUserByEmail } from "~/models/user.server";
 import { getUserId, createUserSession } from "~/session.server";
 import { safeRedirect, validateEmail } from "~/utils";
