@@ -7,15 +7,29 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model Role {
+  id          String @id @default(cuid())
+  name        String @unique
+  description String
+  User        User[]
+}
+
 model User {
-  id    String @id @default(cuid())
-  email String @unique
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String
+  age      Int?
+  roleType Role    @relation(fields: [role], references: [name])
+  role     String
+  image    Image?  @relation(fields: [imageUrl], references: [url])
+  imageUrl String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   password Password?
-  notes    Note[]
+
+  Event Event[]
 }
 
 model Password {
@@ -25,14 +39,70 @@ model Password {
   userId String @unique
 }
 
-model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
+model Tag {
+  id   String @id @default(cuid())
+  name String @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  event Event[]
+}
+
+model Location {
+  id      String @id @default(cuid())
+  address String @unique
+  name    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Event Event[]
+}
+
+model Host {
+  id       String  @id @default(cuid())
+  name     String
+  email    String  @unique
+  image    Image?  @relation(fields: [imageUrl], references: [url])
+  imageUrl String? @unique
+
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Event Event[]
+}
+
+model Image {
+  id  String @id @default(cuid())
+  url String @unique
+
+  hosts Host[]
+  user  User[]
+  Event Event[]
+}
+
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  startDate   DateTime
+  endDate     DateTime
+  image       Image?   @relation(fields: [imageUrl], references: [url])
+  imageUrl    String?  @unique
+
+  host   Host   @relation(fields: [hostId], references: [id])
+  hostId String @unique
+
+  tags            Tag[]
+  attendees       User[]
+  seats           Int
+  price           Float
+  location        Location @relation(fields: [locationAddress], references: [address])
+  locationAddress String
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
 }
